@@ -113,6 +113,8 @@ CampusTrace!Demo2026
 
 公共接口说明见 [docs/module-interface.md](docs/module-interface.md)。
 
+团队协作规则见 [docs/team-workflow.md](docs/team-workflow.md)，页面外观规范见 [docs/ui-style-guide.md](docs/ui-style-guide.md)。
+
 ## 安全边界
 
 - 只运行于本地课程虚拟机。
