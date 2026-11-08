@@ -1,0 +1,23 @@
+# Local secrets
+app/config.local.php
+
+# Runtime files
+storage/baseline_images/*
+storage/logs/*
+storage/run/*
+!storage/baseline_images/.gitkeep
+!storage/logs/.gitkeep
+!storage/run/.gitkeep
+
+# Test evidence that should be regenerated
+tests/.tmp/
+tests/results/
+
+# Editor and OS files
+.idea/
+.vscode/
+*.swp
+*.tmp
+Thumbs.db
+Desktop.ini
+
