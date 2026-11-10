@@ -10,3 +10,12 @@
 6. 登录后可以退出。
 7. 待实现模块返回统一的 501 页面。
 
+账号模块完整测试在虚拟机中运行：
+
+```powershell
+C:\phpstudy_pro\Extensions\php\php7.3.4nts\php.exe `
+  C:\phpstudy_pro\WWW\CampusTrace\tests\security\account_flow.php
+```
+
+该脚本会创建一个临时用户和临时邀请码，测试结束后自动清理。
+

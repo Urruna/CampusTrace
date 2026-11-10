@@ -52,6 +52,36 @@ try {
         return;
     }
 
+    if ($method === 'GET' && $path === '/register') {
+        $auth->showRegister();
+        return;
+    }
+
+    if ($method === 'POST' && $path === '/register') {
+        $auth->register();
+        return;
+    }
+
+    if ($method === 'GET' && $path === '/activate') {
+        $auth->showActivate();
+        return;
+    }
+
+    if ($method === 'POST' && $path === '/activate') {
+        $auth->activate();
+        return;
+    }
+
+    if ($method === 'GET' && $path === '/account/contact') {
+        $auth->showContact();
+        return;
+    }
+
+    if ($method === 'POST' && $path === '/account/contact') {
+        $auth->updateContact();
+        return;
+    }
+
     if (preg_match('#^/posts/(\d+)$#', $path, $matches) && $method === 'GET') {
         $postController = new PostController(new PostRepository(db()));
         $postController->show((int) $matches[1]);
@@ -59,10 +89,6 @@ try {
     }
 
     $pendingRoutes = [
-        'GET /register' => ['成员 1', '注册页面'],
-        'POST /register' => ['成员 1', '注册处理'],
-        'GET /activate' => ['成员 1', '邀请码激活页面'],
-        'POST /activate' => ['成员 1', '邀请码激活处理'],
         'GET /posts/new' => ['成员 2', '发布页面'],
         'POST /posts/new' => ['成员 2', '发布处理'],
         'POST /posts/{id}/resolve' => ['成员 2', '结帖处理'],
