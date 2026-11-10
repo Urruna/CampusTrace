@@ -12,7 +12,8 @@ CampusTrace 是一个用于《软件安全》课程大作业的本地失物招�
 - 固定的模拟账号、帖子和邀请码。
 - 环境检查页。
 - 独立的 Nginx 8080 配置和 Windows 启停脚本。
-- 未来四个功能模块的路由占位。
+- 认领申请、发布者审批和模拟联系方式读取。
+- 其余待实现模块的路由占位。
 
 当前骨架已于 2026-11-08 部署到课程虚拟机，并通过宿主机冒烟测试。
 
@@ -20,8 +21,7 @@ CampusTrace 是一个用于《软件安全》课程大作业的本地失物招�
 
 - 注册和邀请码激活。
 - 发帖、编辑、图片上传和举报页面。
-- 认领审批和联系方式读取。
-- baseline 故意保留的安全缺口。
+- 其他模块的 baseline 安全对照入口。
 - 最终 14 组 baseline 回归测试。
 
 ## 环境
@@ -101,17 +101,19 @@ CampusTrace!Demo2026
 | POST | `/posts/{id}/resolve` | 成员 2 待实现 |
 | POST | `/posts/{id}/image` | 成员 3 待实现 |
 | GET | `/images/{id}` | 成员 3 待实现 |
-| POST | `/posts/{id}/claims` | 成员 4 待实现 |
-| GET | `/claims/{id}` | 成员 4 待实现 |
-| POST | `/claims/{id}/approve` | 成员 4 待实现 |
-| POST | `/claims/{id}/reject` | 成员 4 待实现 |
-| POST | `/claims/{id}/revoke` | 成员 4 待实现 |
-| GET | `/claims/{id}/contact` | 成员 4 待实现 |
+| GET/POST | `/posts/{id}/claims` | 已实现认领表单、发布者申请列表与提交 |
+| GET | `/claims/{id}` | 已实现认领详情 |
+| POST | `/claims/{id}/approve` | 已实现批准与替换旧获批人 |
+| POST | `/claims/{id}/reject` | 已实现拒绝 |
+| POST | `/claims/{id}/revoke` | 已实现撤回 |
+| GET | `/claims/{id}/contact` | 已实现 Baseline 模拟联系入口，保留 R06/R07 |
 | POST | `/posts/{id}/reports` | 成员 2 待实现 |
 | GET | `/admin/reports` | 成员 2 待实现 |
 | POST | `/admin/posts/{id}/remove` | 成员 2 待实现 |
 
 公共接口说明见 [docs/module-interface.md](docs/module-interface.md)。
+
+成员 4 的整站测试步骤与证据表见 [认领模块 Baseline 操作手册](docs/modules/member-4-baseline-test.md)。
 
 团队协作规则见 [docs/team-workflow.md](docs/team-workflow.md)，页面外观规范见 [docs/ui-style-guide.md](docs/ui-style-guide.md)。
 
