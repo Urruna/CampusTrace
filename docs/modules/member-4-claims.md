@@ -1,6 +1,6 @@
 # 成员 4：认领申请与联系授权
 
-状态：待实现
+状态：Baseline 认领流程已实现，等待整站集成和统一记录。
 
 ## 范围
 
@@ -9,24 +9,37 @@
 - 获批申请人读取模拟联系方式。
 - 同一帖子最多一个有效获批申请人。
 
-## 路由
+## 页面和路由
 
-- `POST /posts/{id}/claims`
-- `GET /claims/{id}`
-- `POST /claims/{id}/approve`
-- `POST /claims/{id}/reject`
-- `POST /claims/{id}/revoke`
-- `GET /claims/{id}/contact`
+| 方法与路径 | 行为 |
+| --- | --- |
+| `GET /posts/{id}/claims` | 发布者进入本人帖子的申请列表。其他已激活用户看到开放帖子的申请表单，已有申请则跳转到自己的详情 |
+| `POST /posts/{id}/claims` | 接收 `reason`、`clue` 与 CSRF 令牌。申请人取自会话，成功后跳转到新申请详情 |
+| `GET /claims/{id}` | 申请人或发布者可读取申请详情和核验线索 |
+| `POST /claims/{id}/approve` | 发布者批准开放帖子的待审批申请，自动撤回旧获批人 |
+| `POST /claims/{id}/reject` | 发布者拒绝待审批申请 |
+| `POST /claims/{id}/revoke` | 发布者撤回已批准申请 |
+| `GET /claims/{id}/contact` | 读取独立的模拟联系方式页面。仅此入口保留 R06/R07 |
+
+帖子详情接入原有的认领链接。发布者看到「管理认领」，其他用户在开放帖子看到「申请认领」。GET 仅展示，写入用 POST。缺少会话跳转登录，角色或归属不符返回 403，重复申请或非法状态转换返回 409。
 
 ## 必须交接
 
 - 认领状态：`pending`、`approved`、`rejected`、`revoked`。
-- 批准操作使用数据库事务。
+- 所有审批先锁住关联帖子，再锁定目标申请。自动撤回旧批准与批准新申请在同一个事务内提交。
 - 发布者只能处理自己帖子下的申请。
-- 联系方式只返回给当前有效获批申请人。
+- 共用现有 `users`、`posts`、`claims`、`audit_events`，无迁移或种子数据变更。审批记录包含操作人、申请、动作和结果。核验线索与联系方式不写入审计表。
+- 复用 `db()`、`require_active_user()`、CSRF 和公共布局。同一用户对同一帖子只提交一次申请，终态申请可继续查看。
 
 ## Baseline 缺口
 
-- R06：联系方式入口先只检查登录。
-- R07：公开响应或旧联系入口保留受控的泄露缺口。
+- **R06**：模拟联系方式入口检查会话，但未绑定申请人及批准状态。独立的申请详情和审批操作仍检查归属。
+- **R07**：使用旧地址复现。帖子已解决或下架后，原联系方式入口仍返回模拟联系方式。公开列表和详情未增加联系方式字段。
+- 教学入口仅在 `campustrace_baseline` 配置下返回符合种子格式的 `@example.test` 地址，并设置 `Cache-Control: no-store`。
+
+## 验证和交接
+
+- 自动回归脚本为 `tests/security/test_claims.php`。使用现有种子账号及临时模拟记录，结束时清理该次运行产生的记录。
+- 统一测试人员按 [Baseline 测试操作手册](member-4-baseline-test.md) 记录 CLAIM-01、CLAIM-02 和 STATE-01。
+- 集成需要在 `public/index.php` 注册认领路由，并在 `app/views/posts/show.php` 保留正确的认领入口与发布者入口。若成员 2 同时修改详情页，合并时保留双方的业务入口。
 

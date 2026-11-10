@@ -17,7 +17,10 @@ declare(strict_types=1);
     <div class="description"><?= nl2br(h($post['description'])) ?></div>
     <div class="detail-actions">
         <a class="button button-secondary" href="/">返回列表</a>
-        <a class="button button-primary" href="/posts/<?= (int) $post['id'] ?>/claims">申请认领</a>
+        <?php $isOwner = $currentUser !== null && (int) $currentUser['id'] === (int) $post['owner_id']; ?>
+        <?php if ($isOwner || $post['status'] === 'open'): ?>
+            <a class="button button-primary" href="/posts/<?= (int) $post['id'] ?>/claims"><?= $isOwner ? '管理认领' : '申请认领' ?></a>
+        <?php endif; ?>
     </div>
 </article>
 
