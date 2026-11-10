@@ -98,3 +98,14 @@ function post_status_label(string $status): string
     return $labels[$status] ?? $status;
 }
 
+function report_status_label(string $status): string
+{
+    $labels = [
+        'pending' => '待处理',
+        'resolved' => '已处理',
+        'dismissed' => '已驳回',
+    ];
+
+    return $labels[$status] ?? $status;
+}
+

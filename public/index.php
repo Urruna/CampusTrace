@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/app/bootstrap.php';
 require_once CAMPUS_APP . '/models/PostRepository.php';
+require_once CAMPUS_APP . '/models/ReportRepository.php';
 require_once CAMPUS_APP . '/controllers/AuthController.php';
 require_once CAMPUS_APP . '/controllers/PostController.php';
+require_once CAMPUS_APP . '/controllers/AdminController.php';
 require_once CAMPUS_APP . '/controllers/HealthController.php';
 
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
@@ -27,7 +29,7 @@ function module_pending(string $owner, string $message): void
 
 try {
     if ($method === 'GET' && $path === '/') {
-        $postController = new PostController(new PostRepository(db()));
+        $postController = new PostController(new PostRepository(db()), new ReportRepository(db()));
         $postController->index();
         return;
     }
@@ -52,8 +54,56 @@ try {
         return;
     }
 
+    if ($method === 'GET' && $path === '/posts/new') {
+        $postController = new PostController(new PostRepository(db()), new ReportRepository(db()));
+        $postController->createForm();
+        return;
+    }
+
+    if ($method === 'POST' && $path === '/posts/new') {
+        $postController = new PostController(new PostRepository(db()), new ReportRepository(db()));
+        $postController->store();
+        return;
+    }
+
+    if (preg_match('#^/posts/(\d+)/edit$#', $path, $matches) && $method === 'GET') {
+        $postController = new PostController(new PostRepository(db()), new ReportRepository(db()));
+        $postController->editForm((int) $matches[1]);
+        return;
+    }
+
+    if (preg_match('#^/posts/(\d+)/edit$#', $path, $matches) && $method === 'POST') {
+        $postController = new PostController(new PostRepository(db()), new ReportRepository(db()));
+        $postController->update((int) $matches[1]);
+        return;
+    }
+
+    if (preg_match('#^/posts/(\d+)/resolve$#', $path, $matches) && $method === 'POST') {
+        $postController = new PostController(new PostRepository(db()), new ReportRepository(db()));
+        $postController->resolve((int) $matches[1]);
+        return;
+    }
+
+    if (preg_match('#^/posts/(\d+)/reports$#', $path, $matches) && $method === 'POST') {
+        $postController = new PostController(new PostRepository(db()), new ReportRepository(db()));
+        $postController->submitReport((int) $matches[1]);
+        return;
+    }
+
+    if ($method === 'GET' && $path === '/admin/reports') {
+        $adminController = new AdminController(new PostRepository(db()), new ReportRepository(db()));
+        $adminController->reports();
+        return;
+    }
+
+    if (preg_match('#^/admin/posts/(\d+)/remove$#', $path, $matches) && $method === 'POST') {
+        $adminController = new AdminController(new PostRepository(db()), new ReportRepository(db()));
+        $adminController->removePost((int) $matches[1]);
+        return;
+    }
+
     if (preg_match('#^/posts/(\d+)$#', $path, $matches) && $method === 'GET') {
-        $postController = new PostController(new PostRepository(db()));
+        $postController = new PostController(new PostRepository(db()), new ReportRepository(db()));
         $postController->show((int) $matches[1]);
         return;
     }
@@ -87,14 +137,8 @@ try {
         'POST /register' => ['成员 1', '注册处理'],
         'GET /activate' => ['成员 1', '邀请码激活页面'],
         'POST /activate' => ['成员 1', '邀请码激活处理'],
-        'GET /posts/new' => ['成员 2', '发布页面'],
-        'POST /posts/new' => ['成员 2', '发布处理'],
-        'POST /posts/{id}/resolve' => ['成员 2', '结帖处理'],
-        'GET /admin/reports' => ['成员 2', '举报列表'],
-        'POST /admin/posts/{id}/remove' => ['成员 2', '管理员下架'],
         'POST /posts/{id}/image' => ['成员 3', '图片上传'],
         'GET /images/{id}' => ['成员 3', '受控图片读取'],
-        'POST /posts/{id}/reports' => ['成员 2', '举报提交'],
     ];
     $routeKey = $method . ' ' . preg_replace('#/\d+#', '/{id}', $path);
     if (isset($pendingRoutes[$routeKey])) {
@@ -102,19 +146,8 @@ try {
         return;
     }
 
-    if (preg_match('#^/posts/(\d+)/(edit|image|resolve|reports)$#', $path, $matches)) {
-        $owners = [
-            'edit' => '成员 2',
-            'resolve' => '成员 2',
-            'reports' => '成员 2',
-            'image' => '成员 3',
-        ];
-        module_pending($owners[$matches[2]], '该帖子子功能尚未接入');
-        return;
-    }
-
-    if (preg_match('#^/admin/posts/(\d+)/remove$#', $path)) {
-        module_pending('成员 2', '管理员下架尚未接入');
+    if (preg_match('#^/posts/(\d+)/image$#', $path, $matches)) {
+        module_pending('成员 3', '该帖子图片功能尚未接入');
         return;
     }
 
