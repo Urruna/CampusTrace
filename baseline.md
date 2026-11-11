@@ -126,19 +126,22 @@ CampusTrace/
 │     ├─ layout.php
 │     ├─ auth/
 │     ├─ posts/
+│     ├─ account/
 │     ├─ claims/
-│     └─ admin/
+│     ├─ admin/
+│     └─ health/
 ├─ public/
 │  ├─ index.php
 │  └─ assets/
-│     ├─ app.css
-│     └─ app.js
+│     └─ app.css
 ├─ database/
 │  ├─ 01_schema.sql
 │  ├─ 02_seed.sql
 │  └─ 99_reset.sql
 ├─ storage/
-│  └─ baseline_images/
+│  ├─ baseline_images/
+│  ├─ logs/
+│  └─ run/
 ├─ tests/
 │  ├─ smoke/
 │  ├─ security/
@@ -149,7 +152,7 @@ CampusTrace/
    └─ modules/
 ```
 
-`public/` 是唯一允许被 Apache 访问的应用目录。`storage/` 必须位于站点根目录之外，并加入 `.gitignore`。
+`public/` 是唯一允许被 Nginx 访问的应用目录。`storage/` 必须位于站点根目录之外，并加入 `.gitignore`。
 
 ### 3.3 配置与数据
 
@@ -276,7 +279,7 @@ app/auth.php
 app/controllers/AuthController.php
 app/views/auth/
 database/02_seed.sql 中的账号与邀请码部分
-tests/security/test_auth.php
+tests/security/account_flow.php
 docs/modules/member-1-auth.md
 ```
 
@@ -297,8 +300,8 @@ docs/modules/member-1-auth.md
 ```text
 app/controllers/PostController.php
 app/controllers/AdminController.php
-app/models/Post.php
-app/models/Report.php
+app/models/PostRepository.php
+app/models/ReportRepository.php
 app/views/posts/
 app/views/admin/
 tests/security/test_posts.php
@@ -489,7 +492,7 @@ Baseline 风险编号：
 - 12 组以上测试有实际结果。
 - 计划的 R01、R04、R05、R06、R07、R09 等缺口可复现。
 - 正常功能没有被安全缺口意外破坏。
-- README 写明 PHP、MySQL、Apache、扩展和访问地址。
+- README 写明 PHP、MySQL、Nginx、扩展和访问地址。
 - 两个版本都能使用相同的账号、帖子和图片初始化。
 - 四个模块都有负责人、文件、路由、测试和贡献说明。
 - 没有真实联系方式、敏感图片或公网服务依赖。
@@ -633,10 +636,11 @@ tests/                    测试脚本、固定样本和结果
 
 ## 15. 当前未完成事项
 
-- 公共骨架已经部署到虚拟机，并通过 16 项宿主机冒烟测试。
-- PHP、GD/JPEG、MySQL、Nginx 8080 和宿主机访问已在虚拟机中实测。
-- Git 仓库尚未初始化。
-- 四个业务模块尚未由成员实现。
-- 四份具体模块说明和 PR 模板尚未创建。
+- 四个业务模块已经完成集成，并通过 91 项自动化检查。
+- PHP、GD/JPEG、MySQL、Nginx 8080、账号、帖子、图片和认领流程均已在虚拟机实测。
+- Git 仓库和私有 GitHub 远程已经建立。
+- 尚未在另一台测试电脑完成迁移复测。
+- 正式 `baseline` 标签尚未创建；当前仅有 `skeleton-v0.1` 标签。
+- 迁移指南已经补充，但脚本中的 PHPStudy 默认路径仍可能需要按测试电脑修改。
 - hardened 版本尚未开始，不能提前混入 baseline。
 
