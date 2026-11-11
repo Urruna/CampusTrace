@@ -45,7 +45,7 @@ Assert-True (-not ($filtered.Content -match "/posts/1")) "filter excludes non-ma
 
 $detail = Invoke-WebRequest -Uri "$BaseUrl/posts/1" -UseBasicParsing -TimeoutSec 10
 Assert-True ($detail.StatusCode -eq 200) "GET /posts/1 returns 200"
-Assert-True ($detail.Content -match "/claims") "post detail renders claim entry"
+Assert-True ($detail.Content -match "/login") "guest post detail renders login action"
 
 try {
     Invoke-WebRequest -Uri "$BaseUrl/posts/999" -UseBasicParsing -TimeoutSec 10 | Out-Null
@@ -54,12 +54,8 @@ try {
     Assert-True ([int]$_.Exception.Response.StatusCode -eq 404) "missing post returns 404"
 }
 
-try {
-    Invoke-WebRequest -Uri "$BaseUrl/posts/new" -MaximumRedirection 0 -UseBasicParsing -TimeoutSec 10 | Out-Null
-    Assert-True $false "guest post form redirects to login"
-} catch {
-    Assert-True ([int]$_.Exception.Response.StatusCode -eq 302) "guest post form redirects to login"
-}
+$guestCreateStatus = curl.exe -s -o NUL -w "%{http_code}" "$BaseUrl/posts/new"
+Assert-True ($guestCreateStatus -eq "302") "guest post form redirects to login"
 
 $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 $loginPage = Invoke-WebRequest -Uri "$BaseUrl/login" -WebSession $session -UseBasicParsing -TimeoutSec 10
