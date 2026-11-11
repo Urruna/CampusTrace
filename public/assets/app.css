@@ -320,6 +320,45 @@ a:focus-visible {
     font-size: 18px;
 }
 
+.post-image-block {
+    margin: 28px 0;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+}
+
+.post-image-block h2 {
+    margin-top: 0;
+}
+
+.post-image {
+    margin: 0 0 20px;
+}
+
+.post-image img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: 620px;
+    margin: 0 auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg);
+}
+
+.post-image figcaption {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+.post-image-upload {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin-top: 18px;
+}
+
 .detail-actions {
     display: flex;
     gap: 12px;
@@ -430,7 +469,12 @@ th {
 
     .post-grid,
     .auth-layout {
+        align-items: stretch;
         grid-template-columns: 1fr;
+    }
+
+    .post-image-upload {
+        flex-direction: column;
     }
 
     .meta-list,
