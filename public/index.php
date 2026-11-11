@@ -7,6 +7,8 @@ require_once CAMPUS_APP . '/models/PostRepository.php';
 require_once CAMPUS_APP . '/controllers/AuthController.php';
 require_once CAMPUS_APP . '/controllers/PostController.php';
 require_once CAMPUS_APP . '/controllers/HealthController.php';
+require_once CAMPUS_APP . '/services/ImageService.php';
+require_once CAMPUS_APP . '/controllers/ImageController.php';
 
 $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
 $path = parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
@@ -88,6 +90,30 @@ try {
         return;
     }
 
+    $postImageRoute = preg_match('#^/posts/(\d+)/image$#', $path, $imagePost);
+    $imageRoute = preg_match('#^/images/(\d+)$#', $path, $imageRead);
+    if ($postImageRoute || $imageRoute) {
+        if ($postImageRoute && $method === 'POST') {
+            $controller = new ImageController();
+            $controller->upload((int) $imagePost[1]);
+            return;
+        }
+        if ($imageRoute && $method === 'GET') {
+            $controller = new ImageController();
+            $controller->show((int) $imageRead[1]);
+            return;
+        }
+
+        $allowed = $postImageRoute ? ['POST'] : ['GET'];
+        header('Allow: ' . implode(', ', $allowed));
+        http_response_code(405);
+        render('errors/400', [
+            'title' => '请求方法不支持',
+            'message' => '请使用页面提供的操作提交或读取图片。',
+        ]);
+        return;
+    }
+
     $postClaimsRoute = preg_match('#^/posts/(\d+)/claims$#', $path, $postClaim);
     $claimRoute = preg_match('#^/claims/(\d+)(?:/(approve|reject|revoke|contact))?$#', $path, $claimMatch);
     if ($postClaimsRoute || $claimRoute) {
@@ -118,8 +144,6 @@ try {
         'POST /posts/{id}/resolve' => ['成员 2', '结帖处理'],
         'GET /admin/reports' => ['成员 2', '举报列表'],
         'POST /admin/posts/{id}/remove' => ['成员 2', '管理员下架'],
-        'POST /posts/{id}/image' => ['成员 3', '图片上传'],
-        'GET /images/{id}' => ['成员 3', '受控图片读取'],
         'POST /posts/{id}/reports' => ['成员 2', '举报提交'],
     ];
     $routeKey = $method . ' ' . preg_replace('#/\d+#', '/{id}', $path);
@@ -128,12 +152,11 @@ try {
         return;
     }
 
-    if (preg_match('#^/posts/(\d+)/(edit|image|resolve|reports)$#', $path, $matches)) {
+    if (preg_match('#^/posts/(\d+)/(edit|resolve|reports)$#', $path, $matches)) {
         $owners = [
             'edit' => '成员 2',
             'resolve' => '成员 2',
             'reports' => '成员 2',
-            'image' => '成员 3',
         ];
         module_pending($owners[$matches[2]], '该帖子子功能尚未接入');
         return;

@@ -14,13 +14,14 @@ CampusTrace 是一个用于《软件安全》课程大作业的本地失物招�
 - 环境检查页。
 - 独立的 Nginx 8080 配置和 Windows 启停脚本。
 - 认领申请、发布者审批和模拟联系方式读取。
+- 帖子图片上传、预览、受控读取和替换。
 - 其余待实现模块的路由占位。
 
 当前骨架已于 2026-11-08 部署到课程虚拟机，并通过宿主机冒烟测试。
 
 尚未完成：
 
-- 发帖、编辑、图片上传和举报页面。
+- 发帖、编辑和举报页面。
 - 其他模块的 baseline 安全对照入口。
 - 最终 14 组 baseline 回归测试。
 
@@ -100,8 +101,8 @@ CampusTrace!Demo2026
 | GET/POST | `/posts/new` | 成员 2 待实现 |
 | GET/POST | `/posts/{id}/edit` | 成员 2 待实现 |
 | POST | `/posts/{id}/resolve` | 成员 2 待实现 |
-| POST | `/posts/{id}/image` | 成员 3 待实现 |
-| GET | `/images/{id}` | 成员 3 待实现 |
+| POST | `/posts/{id}/image` | 已实现上传与替换，保留 R01/R05/R09 |
+| GET | `/images/{id}` | 已实现原始图片读取，保留 R02/R04 |
 | GET/POST | `/posts/{id}/claims` | 已实现认领表单、发布者申请列表与提交 |
 | GET | `/claims/{id}` | 已实现认领详情 |
 | POST | `/claims/{id}/approve` | 已实现批准与替换旧获批人 |

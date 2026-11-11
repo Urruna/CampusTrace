@@ -1,6 +1,6 @@
 # CampusTrace Baseline 测试矩阵
 
-当前状态：公共骨架已部署并通过宿主机冒烟测试。  
+当前状态：公共骨架已部署并通过宿主机冒烟测试；图片模块脚本已实现，待课程 VM 实测。
 测试时间：2026-11-08  
 测试地址：`http://192.168.111.148:8080`
 
@@ -28,6 +28,13 @@
 | POST-03 | 查看不存在或已下架帖子 | 返回 404 | 通过 |
 | MODULE-01 | 打开待实现模块路由 | 返回统一的 501 页面 | 通过 |
 | WEB-01 | 宿主机访问 Nginx 8080 | 首页、详情和静态 CSS 正常返回 | 通过 |
+| IMG-01 | 上传正常 PNG/JPEG 并显示 | 元数据、当前引用、文件和预览一致 | 待 VM 实测 |
+| IMG-02 | 普通文本改名为 `.png` | Baseline 接收，记录 R01 | 待 VM 实测 |
+| IMG-03 | 替换后访问旧图片 ID | Baseline 仍返回 200，记录 R04 | 待 VM 实测 |
+| IMG-04 | 比较上传与读取文件字节 | 原始字节一致，记录 R02 | 待 VM 实测 |
+| STATE-01 | 已解决或下架帖子访问旧图片 ID | Baseline 仍返回 200，记录 R04 | 待 VM 实测 |
+| IMG-05 | 其他激活用户替换帖子图片 | Baseline 错误放行，记录 R05 | 待 VM 实测 |
+| FILE-01 | 模拟图片文件移动失败 | 数据库引用改变但文件缺失，记录 R09 | 待 VM 实测 |
 
 baseline 完整阶段继续补充 baseline.md 中的 14 组安全用例。
 
@@ -47,5 +54,13 @@ C:\phpstudy_pro\Extensions\php\php7.3.4nts\php.exe `
 powershell -NoProfile -ExecutionPolicy Bypass `
   -File .\tests\smoke\run-from-host.ps1 `
   -BaseUrl http://192.168.111.148:8080
+```
+
+图片模块在 VM 内复测：
+
+```powershell
+C:\phpstudy_pro\Extensions\php\php7.3.4nts\php.exe `
+  .\tests\security\test_images.php `
+  http://127.0.0.1:8080
 ```
 

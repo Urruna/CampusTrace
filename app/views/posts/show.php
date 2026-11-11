@@ -15,6 +15,10 @@ declare(strict_types=1);
         <div><dt>发布时间</dt><dd><?= h($post['created_at']) ?></dd></div>
     </dl>
     <div class="description"><?= nl2br(h($post['description'])) ?></div>
+    <?php
+    $imageId = $post['image_id'] ?? null;
+    require CAMPUS_APP . '/views/posts/image-preview.php';
+    ?>
     <div class="detail-actions">
         <a class="button button-secondary" href="/">返回列表</a>
         <?php $isOwner = $currentUser !== null && (int) $currentUser['id'] === (int) $post['owner_id']; ?>
