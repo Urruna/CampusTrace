@@ -55,10 +55,10 @@ try {
 }
 
 try {
-    Invoke-WebRequest -Uri "$BaseUrl/posts/new" -UseBasicParsing -TimeoutSec 10 | Out-Null
-    Assert-True $false "pending module returns 501"
+    Invoke-WebRequest -Uri "$BaseUrl/posts/new" -MaximumRedirection 0 -UseBasicParsing -TimeoutSec 10 | Out-Null
+    Assert-True $false "guest post form redirects to login"
 } catch {
-    Assert-True ([int]$_.Exception.Response.StatusCode -eq 501) "pending module returns 501"
+    Assert-True ([int]$_.Exception.Response.StatusCode -eq 302) "guest post form redirects to login"
 }
 
 $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
