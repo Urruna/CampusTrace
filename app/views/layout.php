@@ -25,6 +25,7 @@ declare(strict_types=1);
             <a href="/health">环境检查</a>
             <?php if ($currentUser): ?>
                 <span class="user-chip"><?= h($currentUser['username']) ?></span>
+                <a href="/account/contact">联系方式</a>
                 <form method="post" action="/logout" class="inline-form">
                     <?= csrf_field() ?>
                     <button type="submit" class="link-button">退出</button>

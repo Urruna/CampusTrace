@@ -55,7 +55,7 @@ try {
 }
 
 try {
-    Invoke-WebRequest -Uri "$BaseUrl/register" -UseBasicParsing -TimeoutSec 10 | Out-Null
+    Invoke-WebRequest -Uri "$BaseUrl/posts/new" -UseBasicParsing -TimeoutSec 10 | Out-Null
     Assert-True $false "pending module returns 501"
 } catch {
     Assert-True ([int]$_.Exception.Response.StatusCode -eq 501) "pending module returns 501"

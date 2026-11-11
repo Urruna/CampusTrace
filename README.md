@@ -7,7 +7,8 @@ CampusTrace 是一个用于《软件安全》课程大作业的本地失物招�
 当前目录是 baseline 公共骨架，已包含：
 
 - PHP 7.3.4 兼容的公共启动流程和路由入口。
-- 登录、退出、帖子列表、检索和详情的最小可用流程。
+- 注册、邀请码激活、登录、退出、本人联系方式管理。
+- 帖子列表、检索和详情的最小可用流程。
 - 用户、邀请码、帖子、图片、认领、举报、审计七张数据表。
 - 固定的模拟账号、帖子和邀请码。
 - 环境检查页。
@@ -19,7 +20,6 @@ CampusTrace 是一个用于《软件安全》课程大作业的本地失物招�
 
 尚未完成：
 
-- 注册和邀请码激活。
 - 发帖、编辑、图片上传和举报页面。
 - 其他模块的 baseline 安全对照入口。
 - 最终 14 组 baseline 回归测试。
@@ -94,8 +94,9 @@ CampusTrace!Demo2026
 | GET/POST | `/login` | 已实现 |
 | POST | `/logout` | 已实现 |
 | GET | `/health` | 已实现环境检查 |
-| GET/POST | `/register` | 成员 1 待实现 |
-| GET/POST | `/activate` | 成员 1 待实现 |
+| GET/POST | `/register` | 已实现 |
+| GET/POST | `/activate` | 已实现 |
+| GET/POST | `/account/contact` | 已实现，仅本人可修改 |
 | GET/POST | `/posts/new` | 成员 2 待实现 |
 | GET/POST | `/posts/{id}/edit` | 成员 2 待实现 |
 | POST | `/posts/{id}/resolve` | 成员 2 待实现 |

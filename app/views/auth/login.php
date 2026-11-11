@@ -6,7 +6,7 @@ declare(strict_types=1);
     <div class="panel auth-copy">
         <p class="eyebrow">CampusTrace</p>
         <h1>找回物品，也保护信息。</h1>
-        <p>登录后可以管理本人发布的记录。当前骨架只开放登录、检索和详情，其他模块由成员分别接入。</p>
+        <p>登录后可以管理本人发布的记录和模拟联系方式。认领线索与联系方式只在获得授权后开放。</p>
     </div>
 
     <div class="panel auth-form">
@@ -27,7 +27,10 @@ declare(strict_types=1);
             </label>
             <button type="submit" class="button button-primary">登录</button>
         </form>
-        <p class="hint">测试账号：<code>alice</code> / <code>bob</code> / <code>admin</code></p>
+        <p class="hint">
+            忘记激活？<a href="/activate">使用邀请码激活</a> ·
+            <a href="/register">注册新账号</a>
+        </p>
     </div>
 </section>
 
