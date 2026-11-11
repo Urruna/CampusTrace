@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/app/bootstrap.php';
 require_once CAMPUS_APP . '/models/PostRepository.php';
+require_once CAMPUS_APP . '/models/ReportRepository.php';
+require_once CAMPUS_APP . '/models/Claim.php';
 require_once CAMPUS_APP . '/controllers/AuthController.php';
 require_once CAMPUS_APP . '/controllers/PostController.php';
+require_once CAMPUS_APP . '/controllers/AdminController.php';
+require_once CAMPUS_APP . '/controllers/ClaimController.php';
 require_once CAMPUS_APP . '/controllers/HealthController.php';
 require_once CAMPUS_APP . '/services/ImageService.php';
 require_once CAMPUS_APP . '/controllers/ImageController.php';
@@ -18,19 +22,14 @@ $path = $path === '' ? '/' : $path;
 $auth = new AuthController();
 $healthController = new HealthController();
 
-function module_pending(string $owner, string $message): void
+function new_post_controller(): PostController
 {
-    http_response_code(501);
-    render('errors/501', [
-        'title' => '模块待实现',
-        'message' => $owner . '：' . $message,
-    ]);
+    return new PostController(new PostRepository(db()), new ReportRepository(db()));
 }
 
 try {
     if ($method === 'GET' && $path === '/') {
-        $postController = new PostController(new PostRepository(db()));
-        $postController->index();
+        new_post_controller()->index();
         return;
     }
 
@@ -84,9 +83,50 @@ try {
         return;
     }
 
+    if ($method === 'GET' && $path === '/posts/new') {
+        new_post_controller()->createForm();
+        return;
+    }
+
+    if ($method === 'POST' && $path === '/posts/new') {
+        new_post_controller()->store();
+        return;
+    }
+
+    if (preg_match('#^/posts/(\d+)/edit$#', $path, $matches) && $method === 'GET') {
+        new_post_controller()->editForm((int) $matches[1]);
+        return;
+    }
+
+    if (preg_match('#^/posts/(\d+)/edit$#', $path, $matches) && $method === 'POST') {
+        new_post_controller()->update((int) $matches[1]);
+        return;
+    }
+
+    if (preg_match('#^/posts/(\d+)/resolve$#', $path, $matches) && $method === 'POST') {
+        new_post_controller()->resolve((int) $matches[1]);
+        return;
+    }
+
+    if (preg_match('#^/posts/(\d+)/reports$#', $path, $matches) && $method === 'POST') {
+        new_post_controller()->submitReport((int) $matches[1]);
+        return;
+    }
+
+    if ($method === 'GET' && $path === '/admin/reports') {
+        $controller = new AdminController(new PostRepository(db()), new ReportRepository(db()));
+        $controller->reports();
+        return;
+    }
+
+    if (preg_match('#^/admin/posts/(\d+)/remove$#', $path, $matches) && $method === 'POST') {
+        $controller = new AdminController(new PostRepository(db()), new ReportRepository(db()));
+        $controller->removePost((int) $matches[1]);
+        return;
+    }
+
     if (preg_match('#^/posts/(\d+)$#', $path, $matches) && $method === 'GET') {
-        $postController = new PostController(new PostRepository(db()));
-        $postController->show((int) $matches[1]);
+        new_post_controller()->show((int) $matches[1]);
         return;
     }
 
@@ -115,13 +155,17 @@ try {
     }
 
     $postClaimsRoute = preg_match('#^/posts/(\d+)/claims$#', $path, $postClaim);
-    $claimRoute = preg_match('#^/claims/(\d+)(?:/(approve|reject|revoke|contact))?$#', $path, $claimMatch);
+    $claimRoute = preg_match(
+        '#^/claims/(\d+)(?:/(approve|reject|revoke|contact))?$#',
+        $path,
+        $claimMatch
+    );
     if ($postClaimsRoute || $claimRoute) {
-        require_once CAMPUS_APP . '/models/Claim.php';
-        require_once CAMPUS_APP . '/controllers/ClaimController.php';
         $controller = new ClaimController(new Claim(db()));
         $action = $claimMatch[2] ?? 'detail';
-        $allowed = $postClaimsRoute ? ['GET', 'POST'] : (in_array($action, ['detail', 'contact'], true) ? ['GET'] : ['POST']);
+        $allowed = $postClaimsRoute
+            ? ['GET', 'POST']
+            : (in_array($action, ['detail', 'contact'], true) ? ['GET'] : ['POST']);
         if (!in_array($method, $allowed, true)) {
             header('Allow: ' . implode(', ', $allowed));
             throw new ClaimProblem('请使用页面提供的操作提交申请或审批。', 405);
@@ -135,35 +179,6 @@ try {
         } else {
             $controller->decide((int) $claimMatch[1], $action);
         }
-        return;
-    }
-
-    $pendingRoutes = [
-        'GET /posts/new' => ['成员 2', '发布页面'],
-        'POST /posts/new' => ['成员 2', '发布处理'],
-        'POST /posts/{id}/resolve' => ['成员 2', '结帖处理'],
-        'GET /admin/reports' => ['成员 2', '举报列表'],
-        'POST /admin/posts/{id}/remove' => ['成员 2', '管理员下架'],
-        'POST /posts/{id}/reports' => ['成员 2', '举报提交'],
-    ];
-    $routeKey = $method . ' ' . preg_replace('#/\d+#', '/{id}', $path);
-    if (isset($pendingRoutes[$routeKey])) {
-        module_pending($pendingRoutes[$routeKey][0], $pendingRoutes[$routeKey][1]);
-        return;
-    }
-
-    if (preg_match('#^/posts/(\d+)/(edit|resolve|reports)$#', $path, $matches)) {
-        $owners = [
-            'edit' => '成员 2',
-            'resolve' => '成员 2',
-            'reports' => '成员 2',
-        ];
-        module_pending($owners[$matches[2]], '该帖子子功能尚未接入');
-        return;
-    }
-
-    if (preg_match('#^/admin/posts/(\d+)/remove$#', $path)) {
-        module_pending('成员 2', '管理员下架尚未接入');
         return;
     }
 
@@ -185,4 +200,3 @@ try {
         'message' => '服务器处理请求时发生错误，请检查数据库和运行环境。',
     ]);
 }
-

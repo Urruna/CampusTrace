@@ -8,22 +8,20 @@ CampusTrace 是一个用于《软件安全》课程大作业的本地失物招�
 
 - PHP 7.3.4 兼容的公共启动流程和路由入口。
 - 注册、邀请码激活、登录、退出、本人联系方式管理。
-- 帖子列表、检索和详情的最小可用流程。
+- 帖子列表、检索、详情、发布、编辑、结帖、举报和管理员下架。
+- 帖子图片上传、预览、受控读取和替换。
+- 认领申请、发布者审批、联系授权和模拟联系方式读取。
 - 用户、邀请码、帖子、图片、认领、举报、审计七张数据表。
 - 固定的模拟账号、帖子和邀请码。
 - 环境检查页。
 - 独立的 Nginx 8080 配置和 Windows 启停脚本。
-- 认领申请、发布者审批和模拟联系方式读取。
-- 帖子图片上传、预览、受控读取和替换。
-- 其余待实现模块的路由占位。
 
-当前骨架已于 2026-11-08 部署到课程虚拟机，并通过宿主机冒烟测试。
+四个功能模块已经合并到集成分支，正在进行整站回归验证。
 
 尚未完成：
 
-- 发帖、编辑和举报页面。
-- 其他模块的 baseline 安全对照入口。
-- 最终 14 组 baseline 回归测试。
+- 针对 R01—R10 的完整安全版本对照报告。
+- 四模块汇合后的最终 baseline 验收和证据归档。
 
 ## 环境
 
@@ -69,6 +67,12 @@ powershell -NoProfile -ExecutionPolicy Bypass `
   -BaseUrl http://192.168.111.148:8080
 ```
 
+成员 2 自动化回归：
+
+```powershell
+php .\tests\security\test_posts.php http://192.168.111.148:8080
+```
+
 ## 测试账号
 
 所有账号均为本地模拟账号，统一测试密码：
@@ -98,9 +102,9 @@ CampusTrace!Demo2026
 | GET/POST | `/register` | 已实现 |
 | GET/POST | `/activate` | 已实现 |
 | GET/POST | `/account/contact` | 已实现，仅本人可修改 |
-| GET/POST | `/posts/new` | 成员 2 待实现 |
-| GET/POST | `/posts/{id}/edit` | 成员 2 待实现 |
-| POST | `/posts/{id}/resolve` | 成员 2 待实现 |
+| GET/POST | `/posts/new` | 已实现 |
+| GET/POST | `/posts/{id}/edit` | 成员 2 已实现，保留 R05 |
+| POST | `/posts/{id}/resolve` | 成员 2 已实现，仅发布者可结帖 |
 | POST | `/posts/{id}/image` | 已实现上传与替换，保留 R01/R05/R09 |
 | GET | `/images/{id}` | 已实现原始图片读取，保留 R02/R04 |
 | GET/POST | `/posts/{id}/claims` | 已实现认领表单、发布者申请列表与提交 |
@@ -109,11 +113,13 @@ CampusTrace!Demo2026
 | POST | `/claims/{id}/reject` | 已实现拒绝 |
 | POST | `/claims/{id}/revoke` | 已实现撤回 |
 | GET | `/claims/{id}/contact` | 已实现 Baseline 模拟联系入口，保留 R06/R07 |
-| POST | `/posts/{id}/reports` | 成员 2 待实现 |
-| GET | `/admin/reports` | 成员 2 待实现 |
-| POST | `/admin/posts/{id}/remove` | 成员 2 待实现 |
+| POST | `/posts/{id}/reports` | 成员 2 已实现，保留 R10 |
+| GET | `/admin/reports` | 成员 2 已实现，保留 R10 |
+| POST | `/admin/posts/{id}/remove` | 成员 2 已实现，保留 R10 |
 
 公共接口说明见 [docs/module-interface.md](docs/module-interface.md)。
+
+成员 2 的页面、风险和测试说明见 [成员 2 模块说明](docs/modules/member-2-posts.md)。
 
 成员 4 的整站测试步骤与证据表见 [认领模块 Baseline 操作手册](docs/modules/member-4-baseline-test.md)。
 
@@ -126,4 +132,3 @@ CampusTrace!Demo2026
 - 不对公网服务实施测试。
 - 不提交 `app/config.local.php`、真实数据库密码或上传文件。
 - PHP 7.3.4 已停止官方安全支持，项目结论仅适用于当前课程环境。
-

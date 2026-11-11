@@ -318,6 +318,7 @@ a:focus-visible {
 .description {
     margin: 28px 0;
     font-size: 18px;
+    overflow-wrap: anywhere;
 }
 
 .post-image-block {
@@ -361,7 +362,125 @@ a:focus-visible {
 
 .detail-actions {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 12px;
+}
+
+.action-wrap form {
+    margin: 0;
+}
+
+.post-form-panel,
+.report-admin-panel,
+.report-panel {
+    max-width: 920px;
+    margin: 0 auto;
+}
+
+.post-form-panel h1,
+.report-admin-panel h1 {
+    margin-top: 4px;
+}
+
+.post-form,
+.report-form {
+    display: grid;
+    gap: 18px;
+    margin-top: 24px;
+}
+
+.post-form fieldset {
+    margin: 0;
+    border: 0;
+    padding: 0;
+}
+
+.post-form legend {
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.choice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 6px 0;
+}
+
+.choice input {
+    width: auto;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.field-error {
+    color: var(--danger);
+    font-size: 13px;
+}
+
+.button-danger {
+    border-color: var(--danger);
+    background: var(--danger);
+    color: white;
+}
+
+.button-small {
+    min-height: 34px;
+    padding: 5px 10px;
+    font-size: 13px;
+}
+
+.page-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.report-admin-panel table small {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+}
+
+.report-filter {
+    margin: 24px 0;
+}
+
+.report-panel {
+    margin-top: 20px;
+}
+
+.report-panel h2 {
+    margin-top: 0;
+}
+
+.report-status-pending {
+    background: #fff3cf;
+    color: #7a5500;
+}
+
+.report-status-resolved {
+    background: #e6f4ed;
+    color: var(--success);
+}
+
+.report-status-dismissed {
+    background: #f2f3f5;
+    color: var(--muted);
 }
 
 .notice {
@@ -468,9 +587,13 @@ th {
     }
 
     .post-grid,
+    .auth-layout,
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
     .auth-layout {
         align-items: stretch;
-        grid-template-columns: 1fr;
     }
 
     .post-image-upload {
