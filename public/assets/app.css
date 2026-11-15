@@ -328,6 +328,12 @@ a:focus-visible {
     gap: 12px;
 }
 
+.owned-post-actions {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+}
+
 .action-wrap form {
     margin: 0;
 }

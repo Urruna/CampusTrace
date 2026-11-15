@@ -25,6 +25,7 @@ declare(strict_types=1);
             <a href="/health">环境检查</a>
             <?php if ($currentUser): ?>
                 <span class="user-chip"><?= h($currentUser['username']) ?></span>
+                <a href="/posts/mine">我的帖子</a>
                 <?php if ($currentUser['role'] === 'admin'): ?>
                     <a href="/admin/reports">举报审核</a>
                 <?php endif; ?>

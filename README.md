@@ -103,6 +103,7 @@ CampusTrace!Demo2026
 | GET | `/health` | 已实现环境检查 |
 | GET/POST | `/register` | 成员 1 待实现 |
 | GET/POST | `/activate` | 成员 1 待实现 |
+| GET | `/posts/mine` | 成员 2 已实现，仅显示当前用户的帖子 |
 | GET/POST | `/posts/new` | 成员 2 已实现 |
 | GET/POST | `/posts/{id}/edit` | 成员 2 已实现，保留 R05 |
 | POST | `/posts/{id}/resolve` | 成员 2 已实现，仅发布者可结帖 |

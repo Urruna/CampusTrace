@@ -28,6 +28,15 @@ final class PostController
         ]);
     }
 
+    public function mine(): void
+    {
+        $user = require_active_user();
+        render('posts/mine', [
+            'title' => '我的帖子',
+            'posts' => $this->posts->listOwned((int) $user['id']),
+        ]);
+    }
+
     public function show(int $id): void
     {
         $post = $this->posts->findPublic($id);

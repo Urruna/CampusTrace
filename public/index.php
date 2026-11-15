@@ -39,6 +39,12 @@ try {
         return;
     }
 
+    if ($method === 'GET' && $path === '/posts/mine') {
+        $postController = new PostController(new PostRepository(db()), new ReportRepository(db()));
+        $postController->mine();
+        return;
+    }
+
     if ($method === 'GET' && $path === '/login') {
         $auth->showLogin();
         return;

@@ -179,6 +179,17 @@ try {
     }
     $postId = (int) $matches[1];
 
+    $ownerPosts = $alice->get('/posts/mine');
+    $otherPosts = $bob->get('/posts/mine');
+    check(
+        $ownerPosts['status'] === 200
+        && strpos($ownerPosts['body'], $createTitle) !== false
+        && strpos($ownerPosts['body'], 'status-open') !== false
+        && strpos($otherPosts['body'], $createTitle) === false,
+        'MINE-01 只显示当前用户发布的开放帖子',
+        'owner=' . $ownerPosts['status'] . ',other=' . $otherPosts['status']
+    );
+
     $detail = $alice->get('/posts/' . $postId);
     check(
         $detail['status'] === 200
@@ -233,6 +244,14 @@ try {
         '发布者标记已解决并保持公开可见',
         'status=' . $ownerResolve['status']
     );
+    $resolvedOwnerPosts = $alice->get('/posts/mine');
+    check(
+        $resolvedOwnerPosts['status'] === 200
+        && strpos($resolvedOwnerPosts['body'], $crossEditTitle) !== false
+        && strpos($resolvedOwnerPosts['body'], 'status-resolved') !== false,
+        'MINE-02 我的帖子显示已解决状态',
+        'status=' . $resolvedOwnerPosts['status']
+    );
 
     $reportReason = 'REPORT-' . $stamp;
     $firstReport = $bob->post('/posts/' . $postId . '/reports', ['reason' => $reportReason]);
@@ -246,7 +265,8 @@ try {
     $ordinaryAdmin = $bob->get('/admin/reports');
     check(
         $ordinaryAdmin['status'] === 200
-        && strpos($ordinaryAdmin['body'], 'Baseline R10') !== false,
+        && strpos($ordinaryAdmin['body'], '举报审核') !== false
+        && strpos($ordinaryAdmin['body'], 'Baseline R10') === false,
         'ADMIN-01 普通用户可访问举报审核入口（R10）',
         'status=' . $ordinaryAdmin['status']
     );
@@ -254,6 +274,8 @@ try {
     $ordinaryRemove = $bob->post('/admin/posts/' . $postId . '/remove', []);
     $removedDetail = $bob->get('/posts/' . $postId);
     $removedSearch = $bob->get('/?q=' . rawurlencode($stamp));
+    $removedOwnerPosts = $alice->get('/posts/mine');
+    $removedOtherPosts = $bob->get('/posts/mine');
     check(
         $ordinaryRemove['status'] === 302 && $removedDetail['status'] === 404,
         'ADMIN-01 普通用户下架成功且详情返回 404（R10）',
@@ -264,6 +286,14 @@ try {
         && strpos($removedSearch['body'], $crossEditTitle) === false,
         '下架帖子不再出现在公开列表',
         'status=' . $removedSearch['status']
+    );
+    check(
+        $removedOwnerPosts['status'] === 200
+        && strpos($removedOwnerPosts['body'], $crossEditTitle) !== false
+        && strpos($removedOwnerPosts['body'], 'status-removed') !== false
+        && strpos($removedOtherPosts['body'], $crossEditTitle) === false,
+        'MINE-03 我的帖子保留已下架状态且不泄露给其他用户',
+        'owner=' . $removedOwnerPosts['status'] . ',other=' . $removedOtherPosts['status']
     );
 
     $invalid = $alice->post('/posts/new', [

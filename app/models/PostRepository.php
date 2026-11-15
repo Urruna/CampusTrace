@@ -62,6 +62,29 @@ final class PostRepository
         return $posts;
     }
 
+    public function listOwned(int $ownerId): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT p.id, p.post_type, p.title, p.description, p.category, p.location,
+                    p.status, p.created_at, p.updated_at, i.id AS image_id
+             FROM posts p
+             LEFT JOIN post_images i ON i.id = p.current_image_id
+             WHERE p.owner_id = ?
+             ORDER BY p.updated_at DESC, p.id DESC
+             LIMIT 100'
+        );
+        $stmt->bind_param('i', $ownerId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $posts = [];
+        while ($row = $result->fetch_assoc()) {
+            $posts[] = $row;
+        }
+        $stmt->close();
+
+        return $posts;
+    }
+
     public function findPublic(int $id): ?array
     {
         $stmt = $this->db->prepare(

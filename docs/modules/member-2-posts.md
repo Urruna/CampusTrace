@@ -11,6 +11,7 @@
 | --- | --- | --- | --- |
 | GET | `/` | 公开列表、关键词/类型/状态筛选 | 只显示 `open`、`resolved` |
 | GET | `/posts/{id}` | 帖子详情 | 已下架帖子返回 404 |
+| GET | `/posts/mine` | 我的帖子 | 只查询 `owner_id = 当前用户 ID`，显示全部状态 |
 | GET | `/posts/new` | 发布页 | 要求已激活登录 |
 | POST | `/posts/new` | 创建帖子 | 校验字段并写入审计 |
 | GET | `/posts/{id}/edit` | 编辑页 | baseline 只检查已激活登录（R05） |
@@ -36,6 +37,7 @@ app/models/PostRepository.php
 app/models/ReportRepository.php
 app/views/posts/form.php
 app/views/posts/index.php
+app/views/posts/mine.php
 app/views/posts/show.php
 app/views/admin/reports.php
 tests/security/test_posts.php
@@ -77,7 +79,18 @@ tests/security/test_posts.php
 | R08 | 描述在详情页按 HTML 原样输出；发布、编辑、结帖、举报和下架不校验 CSRF | `posts/show.php`、成员 2 写路由 | 无害 HTML 标记被解析，缺少 CSRF 的请求仍写入 |
 | R10 | 不限制重复举报，不限制举报频率，管理员入口和动作不检查 `admin` 角色 | `ReportRepository::create()`、`AdminController` | 重复举报成功，普通用户可以查看举报并下架 |
 
-代码中使用 `SECURITY-GAP Rxx` 注释标记缺口。页面也显示对应 R10 教学提示，避免把失败行为误认为安全防护。
+代码中使用 `SECURITY-GAP Rxx` 注释标记缺口，测试矩阵和项目文档保留对应编号，便于复现与验收。
+
+业务页面只展示状态和操作提示，不展示 `Baseline` 或风险编号；风险编号保留在 PHP 代码注释、测试矩阵和项目文档中。
+
+## 我的帖子
+
+- 登录并激活的用户可以通过导航栏进入 `/posts/mine`。
+- 查询条件固定包含 `p.owner_id = 当前用户 ID`，管理员也不会因此看到其他用户的帖子。
+- 页面显示 `open`、`resolved` 和 `removed` 三种状态，最多返回最近更新的 100 条记录。
+- 开放帖子提供详情、编辑、认领管理和标记已解决入口。
+- 已解决帖子保留详情、编辑和认领管理入口，并提示停止新认领。
+- 已下架帖子只保留标题、摘要和状态，不提供已失效的详情或编辑入口。
 
 ## 正常测试
 
@@ -86,6 +99,8 @@ tests/security/test_posts.php
 | POST-01 | 发布、列表检索、类型/状态筛选、详情 | 正常完成，公开字段可见 |
 | POST-02 | 发布者编辑本人帖子 | 保存成功并更新审计 |
 | POST-04 | 发布者标记已解决 | 状态变为 `resolved`，仍可公开查看 |
+| MINE-01 | 打开“我的帖子” | 只显示当前用户帖子，不显示其他用户帖子 |
+| MINE-02 | 帖子结帖或下架后再次打开“我的帖子” | 分别显示 `已解决`、`已下架` 状态 |
 | REPORT-01 | 激活用户提交举报 | 写入 `pending` 举报和审计，帖子仍公开 |
 | ADMIN-02 | 管理员下架帖子 | 状态变为 `removed`，相关待处理举报变为 `resolved` |
 | STATE-02 | 下架后访问列表和详情 | 列表不出现，详情 404 |
@@ -101,7 +116,7 @@ tests/security/test_posts.php
 | POST-05 | 类型非法或必填字段为空 | 422 拒绝，不写入数据库 |
 | REPORT-02 | 同一用户重复提交相同举报 | Baseline 接受，记录 R10 |
 
-自动化脚本：`tests/security/test_posts.php`。
+自动化脚本：`tests/security/test_posts.php`，共 18 条断言。
 
 ## 已知限制
 
@@ -109,15 +124,17 @@ tests/security/test_posts.php
 - 实验虚拟机当前不可达，因此本次只完成代码与静态复核；HTTP 测试脚本需在虚拟机恢复后执行。
 - 图片组件和认领入口仍由成员 3、成员 4 接入。
 - 管理员举报页只提供“下架帖子”处理动作，未增加驳回表单或完整管理后台。
+- 管理员不会在“我的帖子”看到全站记录；若后续需要全站帖子管理，应单独增加明确的管理入口。
 - 列表最多返回 100 条，举报列表最多返回 200 条，baseline 未实现分页。
 
 ## 演示步骤
 
 1. 使用 `alice` 登录，打开 `/posts/new` 发布测试帖子。
-2. 回到首页使用关键词、类型和状态筛选，打开详情。
-3. 使用 `bob` 登录，直接修改 alice 的帖子，观察 R05 被放行。
-4. 使用 `bob` 尝试结帖，预期返回 403；切回 `alice` 后结帖成功。
-5. 使用 `bob` 连续提交两次相同举报，观察 R10。
-6. 使用 `bob` 打开 `/admin/reports` 并下架帖子，观察 R10。
-7. 再次打开帖子详情与首页搜索，确认下架后公开入口失效。
+2. 通过导航栏进入“我的帖子”，确认新帖子状态为“开放”，并演示编辑、认领管理和结帖入口。
+3. 回到首页使用关键词、类型和状态筛选，打开详情。
+4. 使用 `bob` 登录“我的帖子”，确认看不到 alice 的记录，再直接修改 alice 的帖子，观察 R05 被放行。
+5. 使用 `bob` 尝试结帖，预期返回 403；切回 `alice` 后结帖成功。
+6. 使用 `bob` 连续提交两次相同举报，观察 R10。
+7. 使用 `bob` 打开 `/admin/reports` 并下架帖子，观察 R10。
+8. 再次打开“我的帖子”、帖子详情与首页搜索，确认下架状态只对发布者可见，公开入口失效。
 
