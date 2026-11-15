@@ -130,9 +130,15 @@ try {
         return;
     }
 
+    $imageDeleteRoute = preg_match('#^/posts/(\d+)/images/(\d+)/delete$#', $path, $imageDelete);
     $postImageRoute = preg_match('#^/posts/(\d+)/image$#', $path, $imagePost);
     $imageRoute = preg_match('#^/images/(\d+)$#', $path, $imageRead);
-    if ($postImageRoute || $imageRoute) {
+    if ($imageDeleteRoute || $postImageRoute || $imageRoute) {
+        if ($imageDeleteRoute && $method === 'POST') {
+            $controller = new ImageController();
+            $controller->delete((int) $imageDelete[1], (int) $imageDelete[2]);
+            return;
+        }
         if ($postImageRoute && $method === 'POST') {
             $controller = new ImageController();
             $controller->upload((int) $imagePost[1]);
@@ -144,7 +150,7 @@ try {
             return;
         }
 
-        $allowed = $postImageRoute ? ['POST'] : ['GET'];
+        $allowed = $imageRoute ? ['GET'] : ['POST'];
         header('Allow: ' . implode(', ', $allowed));
         http_response_code(405);
         render('errors/400', [

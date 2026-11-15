@@ -28,7 +28,7 @@
 
 - `posts.owner_id` 指向 `users.id`。
 - `post_images.post_id` 指向 `posts.id`。
-- `posts.current_image_id` 指向当前公开图片。
+- `posts.current_image_id` 指向多图片相册中的封面图片；完整相册通过 `post_images.post_id = posts.id` 查询。
 - `claims.post_id` 和 `claims.requester_id` 共同确定一次申请。
 - 同一帖子任意时刻最多一个 `approved` 认领，由服务端事务保证。
 

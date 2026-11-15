@@ -8,6 +8,10 @@ if (PHP_SAPI !== 'cli') {
     exit;
 }
 
+// Keep the original command working while the multi-image suite is authoritative.
+require __DIR__ . '/test_images_multi.php';
+exit;
+
 require_once dirname(__DIR__, 2) . '/app/bootstrap.php';
 require_once CAMPUS_APP . '/services/ImageService.php';
 session_write_close();

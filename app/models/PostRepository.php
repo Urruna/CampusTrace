@@ -257,5 +257,25 @@ final class PostRepository
         $stmt->execute();
         $stmt->close();
     }
+
+    public function findPublicImages(int $postId): array
+    {
+        $stmt = $this->db->prepare(
+            'SELECT id, mime_type, file_size, width, height, created_at
+             FROM post_images
+             WHERE post_id = ?
+             ORDER BY created_at ASC, id ASC'
+        );
+        $stmt->bind_param('i', $postId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $images = [];
+        while ($row = $result->fetch_assoc()) {
+            $images[] = $row;
+        }
+        $stmt->close();
+
+        return $images;
+    }
 }
 

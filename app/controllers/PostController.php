@@ -40,6 +40,7 @@ final class PostController
         render('posts/show', [
             'title' => $post['title'],
             'post' => $post,
+            'postImages' => $this->posts->findPublicImages($id),
             'isOwner' => $user !== null && (int) $post['owner_id'] === (int) $user['id'],
             'canUseFeatures' => $user !== null && $user['activated_at'] !== null,
             'reportErrors' => [],
@@ -181,6 +182,7 @@ final class PostController
             render('posts/show', [
                 'title' => $post['title'],
                 'post' => $post,
+                'postImages' => $this->posts->findPublicImages($id),
                 'isOwner' => $isOwner,
                 'canUseFeatures' => true,
                 'reportErrors' => $errors,

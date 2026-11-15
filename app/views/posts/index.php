@@ -48,6 +48,14 @@ declare(strict_types=1);
                     <span class="badge badge-<?= h($post['post_type']) ?>"><?= h(post_type_label($post['post_type'])) ?></span>
                     <span class="badge status-<?= h($post['status']) ?>"><?= h(post_status_label($post['status'])) ?></span>
                 </div>
+                <?php if (!empty($post['image_id'])): ?>
+                    <a class="post-card-image" href="/posts/<?= (int) $post['id'] ?>">
+                        <img
+                            src="/images/<?= (int) $post['image_id'] ?>"
+                            alt="<?= h($post['title'] . '的封面图片') ?>"
+                            loading="lazy">
+                    </a>
+                <?php endif; ?>
                 <h2><a href="/posts/<?= (int) $post['id'] ?>"><?= h($post['title']) ?></a></h2>
                 <p class="post-summary"><?= h(mb_strimwidth($post['description'], 0, 120, '...', 'UTF-8')) ?></p>
                 <dl class="meta-list">
