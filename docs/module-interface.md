@@ -14,7 +14,7 @@
 | `require_admin()` | 要求管理员角色 |
 | `h($value)` | HTML 文本编码 |
 | `csrf_token()` / `csrf_field()` / `verify_csrf()` | 写请求校验工具 |
-| `render($view, $data)` | 使用统一布局渲染页面 |
+| `render($view, $data)` | 使用统一布局渲染页面；可传入 `backUrl` 和 `backLabel` 显示站内返回导航 |
 | `set_flash($type, $message)` | 写入一次性提示 |
 
 ## 固定状态值

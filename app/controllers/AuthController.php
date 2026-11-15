@@ -17,7 +17,11 @@ final class AuthController
             redirect('/');
         }
 
-        render('auth/login', ['title' => '登录']);
+        render('auth/login', [
+            'title' => '登录',
+            'backUrl' => '/',
+            'backLabel' => '返回失物大厅',
+        ]);
     }
 
     public function login(): void
@@ -36,6 +40,8 @@ final class AuthController
                 'title' => '登录',
                 'error' => '用户名和密码不能为空。',
                 'username' => $username,
+                'backUrl' => '/',
+                'backLabel' => '返回失物大厅',
             ]);
             return;
         }
@@ -46,6 +52,8 @@ final class AuthController
                 'title' => '登录',
                 'error' => '用户名、密码错误，或账号尚未激活。',
                 'username' => $username,
+                'backUrl' => '/',
+                'backLabel' => '返回失物大厅',
             ]);
             return;
         }
@@ -67,7 +75,11 @@ final class AuthController
             redirect('/');
         }
 
-        render('auth/register', ['title' => '注册账号']);
+        render('auth/register', [
+            'title' => '注册账号',
+            'backUrl' => '/login',
+            'backLabel' => '返回登录',
+        ]);
     }
 
     public function register(): void
@@ -91,6 +103,8 @@ final class AuthController
                 'error' => $e->getMessage(),
                 'username' => $username,
                 'contact_text' => $contactText,
+                'backUrl' => '/login',
+                'backLabel' => '返回登录',
             ]);
             return;
         } catch (Throwable $e) {
@@ -99,6 +113,8 @@ final class AuthController
             render('errors/500', [
                 'title' => '注册失败',
                 'message' => '服务器无法完成注册，请稍后再试。',
+                'backUrl' => '/register',
+                'backLabel' => '返回注册',
             ]);
             return;
         }
@@ -117,6 +133,8 @@ final class AuthController
         render('auth/activate', [
             'title' => '激活账号',
             'username' => $_SESSION['_pending_activation_username'] ?? '',
+            'backUrl' => '/login',
+            'backLabel' => '返回登录',
         ]);
     }
 
@@ -138,6 +156,8 @@ final class AuthController
                 'title' => '激活账号',
                 'error' => $e->getMessage(),
                 'username' => $username,
+                'backUrl' => '/login',
+                'backLabel' => '返回登录',
             ]);
             return;
         } catch (Throwable $e) {
@@ -146,6 +166,8 @@ final class AuthController
             render('errors/500', [
                 'title' => '激活失败',
                 'message' => '服务器无法完成账号激活，请稍后再试。',
+                'backUrl' => '/activate',
+                'backLabel' => '返回激活',
             ]);
             return;
         }
@@ -161,6 +183,8 @@ final class AuthController
         render('account/contact', [
             'title' => '联系方式',
             'user' => $user,
+            'backUrl' => '/',
+            'backLabel' => '返回失物大厅',
         ]);
     }
 
@@ -178,6 +202,8 @@ final class AuthController
                 'title' => '联系方式',
                 'user' => array_merge($user, ['contact_text' => $contactText]),
                 'error' => $e->getMessage(),
+                'backUrl' => '/',
+                'backLabel' => '返回失物大厅',
             ]);
             return;
         } catch (Throwable $e) {
@@ -186,6 +212,8 @@ final class AuthController
             render('errors/500', [
                 'title' => '联系方式更新失败',
                 'message' => '服务器无法更新联系方式，请稍后再试。',
+                'backUrl' => '/account/contact',
+                'backLabel' => '返回联系方式',
             ]);
             return;
         }

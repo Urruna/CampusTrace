@@ -27,6 +27,8 @@ final class ClaimController
                     'reason' => $reason,
                     'clue' => $clue,
                     'formError' => '申请理由与核验线索均须填写，各限 500 个字符。',
+                    'backUrl' => '/posts/' . $postId,
+                    'backLabel' => '返回帖子详情',
                 ]);
                 return;
             }
@@ -45,6 +47,8 @@ final class ClaimController
                 'title' => '管理认领申请',
                 'post' => $post,
                 'claims' => $this->claims->forOwner($postId, $actorId),
+                'backUrl' => '/posts/' . $postId,
+                'backLabel' => '返回帖子详情',
             ]);
             return;
         }
@@ -53,7 +57,12 @@ final class ClaimController
             redirect('/claims/' . (int) $existing['id']);
         }
         $this->requireOpenPost($post);
-        render('claims/form', ['title' => '提交认领申请', 'post' => $post]);
+        render('claims/form', [
+            'title' => '提交认领申请',
+            'post' => $post,
+            'backUrl' => '/posts/' . $postId,
+            'backLabel' => '返回帖子详情',
+        ]);
     }
 
     public function detail(int $id): void
@@ -74,6 +83,10 @@ final class ClaimController
             'claim' => $claim,
             'isOwner' => $owner,
             'isRequester' => $requester,
+            'backUrl' => $owner
+                ? '/posts/' . (int) $claim['post_id'] . '/claims'
+                : '/posts/' . (int) $claim['post_id'],
+            'backLabel' => $owner ? '返回认领管理' : '返回帖子详情',
         ]);
     }
 
@@ -100,7 +113,13 @@ final class ClaimController
         if ($contact === null) {
             throw new ClaimProblem('该模拟联系方式不可用。', 404);
         }
-        render('claims/contact', ['title' => '模拟联系方式', 'contact' => $contact, 'claimId' => $id]);
+        render('claims/contact', [
+            'title' => '模拟联系方式',
+            'contact' => $contact,
+            'claimId' => $id,
+            'backUrl' => '/claims/' . $id,
+            'backLabel' => '返回申请详情',
+        ]);
     }
 
     private function openPostForApplicant(int $postId, int $actorId): array

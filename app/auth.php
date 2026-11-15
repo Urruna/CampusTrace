@@ -103,6 +103,8 @@ function require_active_user(): array
         render('errors/403', [
             'title' => '账号未激活',
             'message' => '当前账号不能执行该操作。',
+            'backUrl' => '/',
+            'backLabel' => '返回失物大厅',
         ]);
         exit;
     }
@@ -118,6 +120,8 @@ function require_admin(): array
         render('errors/403', [
             'title' => '权限不足',
             'message' => '该操作仅限管理员。',
+            'backUrl' => '/',
+            'backLabel' => '返回失物大厅',
         ]);
         exit;
     }

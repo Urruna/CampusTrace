@@ -35,6 +35,8 @@ final class ImageController
             render($view, [
                 'title' => '图片操作失败',
                 'message' => $error->getMessage(),
+                'backUrl' => '/posts/' . $postId,
+                'backLabel' => '返回帖子详情',
             ]);
         }
     }
@@ -47,6 +49,8 @@ final class ImageController
             render('errors/404', [
                 'title' => '图片不存在',
                 'message' => '图片不存在或已被删除。',
+                'backUrl' => '/',
+                'backLabel' => '返回失物大厅',
             ]);
             return;
         }
@@ -57,6 +61,8 @@ final class ImageController
             render('errors/404', [
                 'title' => '图片不可用',
                 'message' => '图片文件不存在。',
+                'backUrl' => '/',
+                'backLabel' => '返回失物大厅',
             ]);
             return;
         }

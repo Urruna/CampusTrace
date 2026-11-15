@@ -33,6 +33,7 @@ Assert-True ($health.StatusCode -eq 200) "GET /health returns 200"
 Assert-True (-not ($health.Content -match "status-removed")) "GET /health has no failed checks"
 Assert-True ($health.Content -match "campustrace_baseline") "database connection is available"
 Assert-True ($health.Content -match "utf8mb4") "database uses utf8mb4"
+Assert-True ($health.Content -match 'class="back-link" href="/"') "health page renders back navigation"
 
 $homePageSmoke = Invoke-WebRequest -Uri "$BaseUrl/" -UseBasicParsing -TimeoutSec 10
 Assert-True ($homePageSmoke.StatusCode -eq 200) "GET / returns 200"
@@ -46,6 +47,7 @@ Assert-True (-not ($filtered.Content -match "/posts/1")) "filter excludes non-ma
 $detail = Invoke-WebRequest -Uri "$BaseUrl/posts/1" -UseBasicParsing -TimeoutSec 10
 Assert-True ($detail.StatusCode -eq 200) "GET /posts/1 returns 200"
 Assert-True ($detail.Content -match "/login") "guest post detail renders login action"
+Assert-True ($detail.Content -match 'class="back-link" href="/"') "post detail renders back navigation"
 
 try {
     Invoke-WebRequest -Uri "$BaseUrl/posts/999" -UseBasicParsing -TimeoutSec 10 | Out-Null
@@ -59,6 +61,7 @@ Assert-True ($guestCreateStatus -eq "302") "guest post form redirects to login"
 
 $session = New-Object Microsoft.PowerShell.Commands.WebRequestSession
 $loginPage = Invoke-WebRequest -Uri "$BaseUrl/login" -WebSession $session -UseBasicParsing -TimeoutSec 10
+Assert-True ($loginPage.Content -match 'class="back-link" href="/"') "login page renders back navigation"
 $csrf = [regex]::Match($loginPage.Content, 'name="_csrf" value="([^"]+)"').Groups[1].Value
 $homeAfterLogin = Invoke-WebRequest `
     -Uri "$BaseUrl/login" `
@@ -72,6 +75,24 @@ $homeAfterLogin = Invoke-WebRequest `
     -UseBasicParsing `
     -TimeoutSec 10
 Assert-True ($homeAfterLogin.Content -match "user-chip") "active user can log in"
+
+$createPage = Invoke-WebRequest -Uri "$BaseUrl/posts/new" -WebSession $session -UseBasicParsing -TimeoutSec 10
+Assert-True ($createPage.Content -match 'class="back-link" href="/"') "create page renders back navigation"
+
+$editPage = Invoke-WebRequest -Uri "$BaseUrl/posts/1/edit" -WebSession $session -UseBasicParsing -TimeoutSec 10
+Assert-True ($editPage.Content -match 'class="back-link" href="/posts/1"') "edit page returns to post detail"
+
+$contactPage = Invoke-WebRequest -Uri "$BaseUrl/account/contact" -WebSession $session -UseBasicParsing -TimeoutSec 10
+Assert-True ($contactPage.Content -match 'class="back-link" href="/"') "contact page renders back navigation"
+
+$claimPage = Invoke-WebRequest -Uri "$BaseUrl/claims/1" -WebSession $session -UseBasicParsing -TimeoutSec 10
+Assert-True ($claimPage.Content -match 'class="back-link" href="/posts/1/claims"') "owner claim detail returns to claim inbox"
+
+$claimContactPage = Invoke-WebRequest -Uri "$BaseUrl/claims/1/contact" -WebSession $session -UseBasicParsing -TimeoutSec 10
+Assert-True ($claimContactPage.Content -match 'class="back-link" href="/claims/1"') "claim contact returns to claim detail"
+
+$reportsPage = Invoke-WebRequest -Uri "$BaseUrl/admin/reports" -WebSession $session -UseBasicParsing -TimeoutSec 10
+Assert-True ($reportsPage.Content -match 'class="back-link" href="/"') "admin reports renders back navigation"
 
 $logoutCsrf = [regex]::Match($homeAfterLogin.Content, 'name="_csrf" value="([^"]+)"').Groups[1].Value
 $logoutPage = Invoke-WebRequest `

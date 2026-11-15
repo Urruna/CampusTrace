@@ -44,6 +44,8 @@ final class PostController
             'canUseFeatures' => $user !== null && $user['activated_at'] !== null,
             'reportErrors' => [],
             'reportReason' => '',
+            'backUrl' => '/',
+            'backLabel' => '返回失物大厅',
         ]);
     }
 
@@ -132,6 +134,8 @@ final class PostController
             render('errors/403', [
                 'title' => '无权结帖',
                 'message' => '只有帖子发布者可以将该帖子标记为已解决。',
+                'backUrl' => '/posts/' . $id,
+                'backLabel' => '返回帖子详情',
             ]);
             return;
         }
@@ -181,6 +185,8 @@ final class PostController
                 'canUseFeatures' => true,
                 'reportErrors' => $errors,
                 'reportReason' => $reason,
+                'backUrl' => '/posts/' . $id,
+                'backLabel' => '返回帖子详情',
             ]);
             return;
         }
@@ -240,6 +246,8 @@ final class PostController
             'post' => $post,
             'errors' => $errors,
             'formAction' => $mode === 'edit' ? '/posts/' . (int) $id . '/edit' : '/posts/new',
+            'backUrl' => $mode === 'edit' ? '/posts/' . (int) $id : '/',
+            'backLabel' => $mode === 'edit' ? '返回帖子详情' : '返回失物大厅',
         ]);
     }
 
@@ -249,6 +257,8 @@ final class PostController
         render('errors/404', [
             'title' => '帖子不存在',
             'message' => '该帖子不存在、已下架或不可公开访问。',
+            'backUrl' => '/',
+            'backLabel' => '返回失物大厅',
         ]);
     }
 }

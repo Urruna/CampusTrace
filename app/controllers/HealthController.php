@@ -38,6 +38,8 @@ final class HealthController
         render('health/index', [
             'title' => '环境检查',
             'checks' => $checks,
+            'backUrl' => '/',
+            'backLabel' => '返回失物大厅',
         ]);
     }
 }

@@ -26,6 +26,8 @@ final class AdminController
             'title' => '举报审核',
             'reports' => $this->reports->listAll($status === '' ? null : $status),
             'statusFilter' => $status,
+            'backUrl' => '/',
+            'backLabel' => '返回失物大厅',
         ]);
     }
 
@@ -40,6 +42,8 @@ final class AdminController
             render('errors/404', [
                 'title' => '帖子不存在',
                 'message' => '该帖子不存在或已经下架。',
+                'backUrl' => '/admin/reports',
+                'backLabel' => '返回举报审核',
             ]);
             return;
         }

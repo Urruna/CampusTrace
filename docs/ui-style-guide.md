@@ -53,6 +53,7 @@
 | 提示 | `.notice.notice-success` / `.notice.notice-error` | 操作反馈 |
 | 标签 | `.badge` | 帖子、认领、举报状态 |
 | 元信息 | `.meta-list` | 地点、分类、发布者等 |
+| 返回导航 | `.page-back` / `.back-link` | 明确返回上一级页面 |
 
 新增模块样式使用明确前缀，例如：
 

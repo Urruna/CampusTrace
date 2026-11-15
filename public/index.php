@@ -150,6 +150,8 @@ try {
         render('errors/400', [
             'title' => '请求方法不支持',
             'message' => '请使用页面提供的操作提交或读取图片。',
+            'backUrl' => '/',
+            'backLabel' => '返回失物大厅',
         ]);
         return;
     }
@@ -186,17 +188,26 @@ try {
     render('errors/404', [
         'title' => '页面不存在',
         'message' => '请求的路径不存在。',
+        'backUrl' => '/',
+        'backLabel' => '返回失物大厅',
     ]);
 } catch (ClaimProblem $e) {
     $status = $e->getCode();
     http_response_code($status);
     $view = in_array($status, [403, 404], true) ? 'errors/' . $status : 'errors/400';
-    render($view, ['title' => '无法完成认领操作', 'message' => $e->getMessage()]);
+    render($view, [
+        'title' => '无法完成认领操作',
+        'message' => $e->getMessage(),
+        'backUrl' => '/',
+        'backLabel' => '返回失物大厅',
+    ]);
 } catch (Throwable $e) {
     error_log((string) $e);
     http_response_code(500);
     render('errors/500', [
         'title' => '处理失败',
         'message' => '服务器处理请求时发生错误，请检查数据库和运行环境。',
+        'backUrl' => '/',
+        'backLabel' => '返回失物大厅',
     ]);
 }

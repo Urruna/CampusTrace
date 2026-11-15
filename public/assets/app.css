@@ -111,6 +111,28 @@ a {
     padding: 36px 0 56px;
 }
 
+.page-back {
+    margin-bottom: 16px;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--primary);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.back-link:focus-visible {
+    outline: 3px solid rgba(25, 54, 103, 0.22);
+    outline-offset: 3px;
+}
+
 .hero {
     display: flex;
     align-items: flex-end;

@@ -41,6 +41,14 @@ declare(strict_types=1);
 </header>
 
 <main class="page">
+    <?php if ($backUrl !== null): ?>
+        <nav class="page-back" aria-label="返回导航">
+            <a class="back-link" href="<?= h($backUrl) ?>">
+                <span aria-hidden="true">&larr;</span>
+                <?= h($backLabel) ?>
+            </a>
+        </nav>
+    <?php endif; ?>
     <?php foreach ($flashes as $flash): ?>
         <div class="notice notice-<?= h($flash['type']) ?>"><?= h($flash['message']) ?></div>
     <?php endforeach; ?>

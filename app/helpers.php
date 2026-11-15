@@ -58,6 +58,8 @@ function verify_csrf(): void
         render('errors/400', [
             'title' => '请求校验失败',
             'message' => '表单已过期或请求来源无效，请返回后重新提交。',
+            'backUrl' => '/',
+            'backLabel' => '返回失物大厅',
         ]);
         exit;
     }
@@ -72,6 +74,12 @@ function render(string $view, array $data = []): void
 
     extract($data, EXTR_SKIP);
     $title = $data['title'] ?? app_config('app_name');
+    $backUrl = $data['backUrl'] ?? null;
+    if (!is_string($backUrl) || !preg_match('#^/(?!/)#', $backUrl)) {
+        $backUrl = null;
+    }
+    $backLabel = $data['backLabel'] ?? '返回';
+    $backLabel = is_string($backLabel) && trim($backLabel) !== '' ? trim($backLabel) : '返回';
     $currentUser = current_user();
     $flashes = pull_flashes();
 
