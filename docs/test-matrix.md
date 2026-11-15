@@ -100,7 +100,7 @@ powershell -NoProfile -ExecutionPolicy Bypass `
   -BaseUrl http://192.168.111.148:8080
 ```
 
-2026-11-11 集成分支实测：
+2026-11-15 最新集成分支实测：
 
 ```text
 账号：22/22 通过
