@@ -5,7 +5,6 @@ declare(strict_types=1);
 <section class="panel post-form-panel">
     <p class="eyebrow"><?= $mode === 'edit' ? 'Edit post' : 'New post' ?></p>
     <h1><?= $mode === 'edit' ? '编辑帖子' : '发布寻物或招领信息' ?></h1>
-    <p class="hint">当前为教学 baseline，本表单的写请求暂未校验 CSRF 令牌（R08）。</p>
 
     <?php if ($errors): ?>
         <div class="notice notice-error">请检查表单中的错误后重新提交。</div>

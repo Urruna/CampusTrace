@@ -52,7 +52,6 @@ declare(strict_types=1);
 <?php if ($canUseFeatures): ?>
     <section class="panel report-panel">
         <h2>举报此帖子</h2>
-        <p class="hint">举报不会直接改变帖子状态。当前 baseline 允许重复提交（R10）。</p>
         <?php if (!empty($reportErrors['reason'])): ?>
             <div class="notice notice-error"><?= h($reportErrors['reason']) ?></div>
         <?php endif; ?>

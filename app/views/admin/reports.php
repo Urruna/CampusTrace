@@ -8,9 +8,7 @@ declare(strict_types=1);
             <p class="eyebrow">Report administration</p>
             <h1>举报审核</h1>
         </div>
-        <span class="badge status-open">Baseline R10</span>
     </div>
-    <p class="hint">教学 baseline 未强制管理员角色，也未阻止普通账号直接访问或下架（R10）。</p>
 
     <form class="filter-bar report-filter" method="get" action="/admin/reports">
         <label class="form-field grow">

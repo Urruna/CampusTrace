@@ -164,6 +164,14 @@ try {
     $publicIndex = $alice->get('/');
     check($publicIndex['status'] === 200, 'GET / 可访问', 'status=' . $publicIndex['status']);
 
+    $createForm = $alice->get('/posts/new');
+    check(
+        $createForm['status'] === 200
+        && stripos($createForm['body'], 'Baseline') === false
+        && strpos($createForm['body'], 'R08') === false,
+        '发帖页面不暴露 Baseline 或风险编号'
+    );
+
     $createTitle = 'M2-SEARCH-' . $stamp;
     $r08Description = 'R08 标记 <mark data-r08="' . $stamp . '">原样输出</mark>';
     $create = $alice->post('/posts/new', [
@@ -246,7 +254,8 @@ try {
     $ordinaryAdmin = $bob->get('/admin/reports');
     check(
         $ordinaryAdmin['status'] === 200
-        && strpos($ordinaryAdmin['body'], 'Baseline R10') !== false,
+        && strpos($ordinaryAdmin['body'], '<h1>举报审核</h1>') !== false
+        && strpos($ordinaryAdmin['body'], 'Baseline R10') === false,
         'ADMIN-01 普通用户可访问举报审核入口（R10）',
         'status=' . $ordinaryAdmin['status']
     );
