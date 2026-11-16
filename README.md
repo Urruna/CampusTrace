@@ -124,6 +124,9 @@ CampusTrace!Demo2026
 
 成员 2 的页面、风险和测试说明见 [成员 2 模块说明](docs/modules/member-2-posts.md)。
 
+成员 3 的多图片测试命令、中英文逐项结果和截图证据见
+[成员 3 多图片测试结果](docs/modules/member-3-test-results.md)。
+
 成员 4 的整站测试步骤与证据表见 [认领模块 Baseline 操作手册](docs/modules/member-4-baseline-test.md)。
 
 团队协作规则见 [docs/team-workflow.md](docs/team-workflow.md)，页面外观规范见 [docs/ui-style-guide.md](docs/ui-style-guide.md)。

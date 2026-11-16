@@ -126,3 +126,6 @@ C:\phpstudy_pro\Extensions\php\php7.3.4nts\php.exe `
 ```text
 多图片端到端测试：24/24 通过
 ```
+
+逐项中英文结果与自动化输出截图见
+[成员 3 多图片测试结果](modules/member-3-test-results.md)。

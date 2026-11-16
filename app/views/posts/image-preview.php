@@ -69,6 +69,5 @@ $canManageImage = $currentUser !== null
             </label>
             <button class="button button-primary" type="submit">上传</button>
         </form>
-        <p class="hint">首次上传时，第一张成功图片会作为封面；后续图片会追加到相册。</p>
     <?php endif; ?>
 </section>

@@ -1,6 +1,6 @@
 # 成员 3：图片上传、显示与替换
 
-状态：多图片、删除和自动化测试已实现，待课程 VM 实测记录
+状态：多图片、删除和自动化测试已实现；本机端到端测试 24/24 通过
 
 ## 范围
 
@@ -20,6 +20,7 @@ public/assets/app.css
 tests/security/test_images.php
 tests/security/test_images_multi.php
 tests/fixtures/images/README.md
+docs/modules/member-3-test-results.md
 ```
 
 ## 路由
@@ -100,9 +101,11 @@ C:\phpstudy_pro\Extensions\php\php7.3.4nts\php.exe `
 
 脚本使用 GD 在 `tests/.tmp/` 生成小型自制图片，并在结束后删除测试帖子、图片记录、上传文件和临时夹具。
 
+2026-11-16 本机测试结果、中英文逐项说明和截图证据见
+[成员 3 多图片测试结果](member-3-test-results.md)。
+
 ## 已知限制
 
-- 当前开发主机没有 PHP/Nginx，未执行运行时测试；提交前必须在课程 VM 完成实测并填写结果。
 - 测试需要 PHP `curl`、`gd`、`mysqli` 和可写的图片目录；测试文件在运行时自生成，不要求人工提供真实图片。
 - Baseline 不实现真实内容校验、重编码、EXIF 清理、手动遮盖、下架图片失效或上传失败回滚。
 
