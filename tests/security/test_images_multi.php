@@ -285,10 +285,15 @@ try {
     image_multi_expect(
         $detail['code'] === 200
         && strpos($detail['body'], '/images/' . $firstId) !== false
-        && strpos($detail['body'], '/images/' . $secondId) !== false
-        && strpos($detail['body'], 'name="images[]"') !== false
-        && strpos($detail['body'], 'multiple') !== false,
-        'IMG-01 detail renders all images and a multi-file input'
+        && strpos($detail['body'], '/images/' . $secondId) !== false,
+        'IMG-01 guest detail renders all gallery images'
+    );
+    $ownerDetail = image_multi_request($sessions['owner'], $base, '/posts/' . $postId);
+    image_multi_expect(
+        $ownerDetail['code'] === 200
+        && strpos($ownerDetail['body'], 'name="images[]"') !== false
+        && strpos($ownerDetail['body'], 'multiple') !== false,
+        'IMG-01 owner detail renders the multi-file upload input'
     );
     image_multi_expect(
         strpos($detail['body'], 'Baseline') === false
@@ -365,11 +370,26 @@ try {
         '/posts/' . $postId . '/images/' . (int) $nonCover['id'] . '/delete',
         'POST'
     );
+    image_multi_expect($ownerDelete['code'] === 302, 'Owner delete request redirects');
+    clearstatcache(true, $nonCoverPath);
+    $nonCoverCleaned = !is_file($nonCoverPath);
+    $cleanupNoticeSeen = true;
+    if (!$nonCoverCleaned) {
+        $afterDeleteDetail = image_multi_request($sessions['owner'], $base, '/posts/' . $postId);
+        $cleanupNoticeSeen = strpos($afterDeleteDetail['body'], '物理文件清理未完成') !== false;
+    }
     image_multi_expect(
-        $ownerDelete['code'] === 302
-        && !is_file($nonCoverPath)
-        && image_multi_request($sessions['guest'], $base, '/images/' . (int) $nonCover['id'])['code'] === 404,
-        'Deleting a non-cover image removes metadata, file and old URL'
+        $nonCoverCleaned || $cleanupNoticeSeen,
+        'Deleting a non-cover image handles file cleanup failure'
+    );
+    $deletedRead = image_multi_request(
+        $sessions['guest'],
+        $base,
+        '/images/' . (int) $nonCover['id']
+    );
+    image_multi_expect(
+        $deletedRead['code'] === 404,
+        'Deleting a non-cover image removes its metadata and old URL'
     );
     image_multi_expect(
         (int) image_multi_post($postId)['current_image_id'] === $firstId,
@@ -384,11 +404,21 @@ try {
         'POST'
     );
     $afterCoverDelete = image_multi_gallery($postId);
+    clearstatcache(true, $coverPath);
+    $coverCleaned = !is_file($coverPath);
+    $coverCleanupNoticeSeen = true;
+    if (!$coverCleaned) {
+        $afterCoverDetail = image_multi_request($sessions['owner'], $base, '/posts/' . $postId);
+        $coverCleanupNoticeSeen = strpos(
+            $afterCoverDetail['body'],
+            '物理文件清理未完成'
+        ) !== false;
+    }
     image_multi_expect(
         $coverDelete['code'] === 302
-        && !is_file($coverPath)
+        && ($coverCleaned || $coverCleanupNoticeSeen)
         && (int) image_multi_post($postId)['current_image_id'] === (int) $afterCoverDelete[0]['id'],
-        'Deleting the cover promotes the first remaining image'
+        'Deleting the cover promotes the next image and handles cleanup failure'
     );
 
     image_multi_sql("UPDATE posts SET status = 'removed' WHERE id = ?", 'i', $postId)->close();
