@@ -133,3 +133,6 @@ C:\phpstudy_pro\Extensions\php\php7.3.4nts\php.exe `
 
 逐项中英文结果与自动化输出截图见
 [成员 3 多图片测试结果](modules/member-3-test-results.md)。
+
+手工浏览器测试素材与说明见
+[成员 3 手工测试图片](../tests/fixtures/images/manual/README.md)。

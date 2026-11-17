@@ -87,3 +87,6 @@ C:\test\CampusTrace\tests\.tmp\manual-images
 - 使用自己制作的简单图标或图形，避免真实照片、联系方式或敏感元数据。
 
 该目录已被 Git 忽略，手工测试图片不会提交到仓库。
+
+已提交、可直接交给测试人员使用的手工图片和完整步骤见
+[手工测试图片目录](../../../tests/fixtures/images/manual/README.md)。
